@@ -1,0 +1,72 @@
+#name: integration
+#
+#on: push
+#
+#jobs:
+#  go-tests:
+#    strategy:
+#      max-parallel: 1
+#      fail-fast: false
+#      matrix:
+#        tf_tests:
+#          - TestDefault
+#
+#    name: Run Terratest Integration Tests
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#
+#      - uses: actions/setup-go@v1
+#        with:
+#          go-version: 1.13
+#
+#      - name: Set up Python 3.
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: '3.x'
+#
+#      - name: Install test dependencies.
+#        run: pip3 install ansible jmespath
+#
+#      - name: Download Go Modules
+#        run: go mod download
+#
+#      - uses: autero1/action-terraform@v1.0.0
+#        with:
+#          terraform_version: 0.14.11
+#
+#      - name: Run tests - TF14
+#        uses: nick-invision/retry@v2
+#        with:
+#          timeout_minutes: 75
+#          max_attempts: 2
+#          command: go test ./test -v --run ${{ matrix.tf_tests }} -timeout 45m
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.CI_AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_SECRET_ACCESS_KEY }}
+#
+##      - name: Run tests - TF14
+##        run: go test ./test -v --run ${{ matrix.tf_tests }} -timeout 45m
+##        env:
+##          AWS_ACCESS_KEY_ID: ${{ secrets.CI_AWS_ACCESS_KEY_ID }}
+##          AWS_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_SECRET_ACCESS_KEY }}
+#
+#      - uses: autero1/action-terraform@v1.0.0
+#        with:
+#          terraform_version: 0.15.3
+#
+#      - name: Run tests - TF15
+#        uses: nick-invision/retry@v2
+#        with:
+#          timeout_minutes: 75
+#          max_attempts: 2
+#          command: go test ./test -v --run ${{ matrix.tf_tests }} -timeout 45m
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.CI_AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_SECRET_ACCESS_KEY }}
+#
+##      - name: Run tests - TF15
+##        run: go test ./test -v --run ${{ matrix.tf_tests }} -timeout 45m
+##        env:
+##          AWS_ACCESS_KEY_ID: ${{ secrets.CI_AWS_ACCESS_KEY_ID }}
+##          AWS_SECRET_ACCESS_KEY: ${{ secrets.CI_AWS_SECRET_ACCESS_KEY }}
