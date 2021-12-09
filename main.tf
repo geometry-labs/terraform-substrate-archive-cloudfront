@@ -16,7 +16,8 @@ variable "tags" {
 }
 
 data "aws_s3_bucket" "this" {
-  bucket = var.s3_bucket_name
+  provider = aws.usw2
+  bucket   = var.s3_bucket_name
 }
 
 data "aws_route53_zone" "root" {
@@ -26,7 +27,7 @@ data "aws_route53_zone" "root" {
 resource "aws_route53_record" "root" {
   zone_id = data.aws_route53_zone.root.zone_id
 
-  name = var.root_domain_name
+  name = join(".", [var.hostname, var.root_domain_name])
   type = "A"
 
   alias {
@@ -36,15 +37,25 @@ resource "aws_route53_record" "root" {
   }
 }
 
-resource "aws_route53_record" "www" {
-  zone_id = data.aws_route53_zone.root.zone_id
+resource "aws_cloudfront_origin_access_identity" "this" {
+  comment = "Substrate archive user"
+}
 
-  name = "www.${var.root_domain_name}"
-  type = "A"
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${data.aws_s3_bucket.this.arn}/*"]
 
-  alias {
-    name                   = aws_cloudfront_distribution.root_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.root_distribution.hosted_zone_id
-    evaluate_target_health = false
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.this.iam_arn]
+    }
   }
+}
+
+resource "aws_s3_bucket_policy" "this" {
+  provider = aws.usw2
+
+  bucket = data.aws_s3_bucket.this.id
+  policy = data.aws_iam_policy_document.s3_policy.json
 }

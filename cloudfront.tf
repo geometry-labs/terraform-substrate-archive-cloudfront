@@ -1,18 +1,12 @@
 
 resource "aws_cloudfront_distribution" "root_distribution" {
   origin {
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols = [
-        "TLSv1",
-        "TLSv1.1",
-        "TLSv1.2",
-      ]
+    domain_name = "${var.s3_bucket_name}.s3.us-west-2.amazonaws.com"
+    origin_id   = join(".", [var.hostname, var.root_domain_name])
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path
     }
-    domain_name = data.aws_s3_bucket.this.website_endpoint
-    origin_id   = var.root_domain_name
   }
 
   enabled             = true
@@ -29,7 +23,8 @@ resource "aws_cloudfront_distribution" "root_distribution" {
       "GET",
       "HEAD",
     ]
-    target_origin_id = var.root_domain_name
+    #    target_origin_id = var.root_domain_name
+    target_origin_id = join(".", [var.hostname, var.root_domain_name])
     min_ttl          = 0
     default_ttl      = 86400
     max_ttl          = 31536000
@@ -42,7 +37,9 @@ resource "aws_cloudfront_distribution" "root_distribution" {
     }
   }
 
-  aliases = [var.root_domain_name]
+  aliases = [
+    join(".", [var.hostname, var.root_domain_name])
+  ]
 
   restrictions {
     geo_restriction {
