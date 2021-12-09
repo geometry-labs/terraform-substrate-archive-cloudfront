@@ -1,6 +1,8 @@
 # terraform-subtrate-archive-cloudfront
 
-![](https://github.com/geometry-labs/terraform-polkadot-aws-node/actions/workflows/integration.yaml/badge.svg)
+Cloudfront distribution for serving archive node backups for the Polkadot ecosystem. Used in conjunction with [terraform-polkadot-aws-node](https://github.com/geometry-labs/terraform-polkadot-aws-node) which creates a bucket and does incremental backups of the archive. 
+
+[comment]: <> (![]&#40;https://github.com/geometry-labs/terraform-polkadot-aws-node/actions/workflows/integration.yaml/badge.svg&#41;)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -53,4 +55,3 @@ Module managed by Geometry Labs
 ## License
 
 Apache 2 Licensed. See LICENSE for full details.
-# terraform-substrate-archive-cloudfront
